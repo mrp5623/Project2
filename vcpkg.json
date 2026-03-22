@@ -1,0 +1,8 @@
+{
+  "name": "project2",
+  "dependencies": [
+    "cpr",
+    "libxml2",
+    "nlohmann-json"
+  ]
+}
