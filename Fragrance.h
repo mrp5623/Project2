@@ -5,6 +5,8 @@
 #ifndef PERFUMESCRAPER_FRAGRANCE_H
 #define PERFUMESCRAPER_FRAGRANCE_H
 
+#include <string>
+
 class Fragrance {
 public:
     Fragrance(std::string fragName, std::string fragUrl) : name(fragName), url(fragUrl) {}
