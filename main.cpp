@@ -9,13 +9,15 @@
 #include <iterator>
 #include "Fragrance.h"
 #include "FragranceHeap.h"
+#include "Set.hpp"
 using json = nlohmann::json;
 
-#define USING_HEAP
+//#define USING_HEAP
+#define USING_SET
 
 int main(int argc, char *argv[]) {
     //open file relative from executable
-    // std::ifstream file("../../perfume_map.json");
+    //std::ifstream file("../../perfume_map.json");
 
     /* file wouldn't open for me with method above on clion so i just went into clion and did
      * run -> edit configurations -> and set the working directory to my project folder which fixed it
@@ -24,7 +26,7 @@ int main(int argc, char *argv[]) {
     std::ifstream file("perfume_map.json");
 
     if (!file.is_open()) {
-        std::cerr << "Fail";
+        std::cerr << "Fail - File not Opening";
         return 1;
     }
 
@@ -128,7 +130,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (res.empty()) {
-        std::cout << "We" << std::endl;
+        std::cout << "We found no perfumes that are a match for your selected notes." << std::endl;
     }
 
     // reversed because min heap displays recommendations from lowest to highest score after popping into res
@@ -140,10 +142,14 @@ int main(int argc, char *argv[]) {
         std::cout << count << ". " << n.frag->name << ": " << n.frag->url << std::endl;
         count++;
     }
-#else
-    std::unordered_set<> results;
+#endif
+
+#ifdef USING_SET
+    //std::unordered_set<> results;
+    Set results;
 
     while(true){
+        
         std::cout << "Enter a desired note, or enter Done to continue!" << std::endl;
         std::getline(std::cin, input);
         if (input=="Done"){
@@ -153,23 +159,31 @@ int main(int argc, char *argv[]) {
             std::cout << "Not a note!" << std::endl;
             continue;
         }
-        else if (results.empty()) {
+        else if (results.isEmpty()) {
             std::cout << "Adding " << input << std::endl;
-            results = noteToFrags[input];
+            Set notesSet;
+            for (Fragrance* f : noteToFrags[input]) {
+                notesSet.insert(f);
+            }
+            results = notesSet;
         } else {
             std::cout << "Intersecting " << input << std::endl;
+            Set notesSet;
+            for (Fragrance* f : noteToFrags[input]) {
+                notesSet.insert(f);
+            }
+            results = results.intersect(notesSet);
+
+            /*
             std::set<std::pair<std::string, std::string>> new_results = {};
             std::set_intersection(results.begin(), results.end(), noteToFrags[input].begin(), noteToFrags[input].end(), std::inserter(new_results, new_results.begin()));
             results = new_results;
+            */
         }
     }
 
     std::cout << "Here are the perfumes that match your criteria:" << std::endl;
-    int count = 1;
-    for (auto& [name, url] : results) {
-        std::cout << count << ". " << name << ": " << url << std::endl;
-        count++;
-    }
+    results.printResults();
 #endif
     
     return 0;
