@@ -9,21 +9,19 @@
 #include <iterator>
 #include "Fragrance.h"
 #include "FragranceHeap.h"
-#include "Set.hpp"
 using json = nlohmann::json;
 
 #define USING_HEAP
 
 int main(int argc, char *argv[]) {
     //open file relative from executable
-    std::ifstream file("../../perfume_map.json");
-    //std::ifstream file("../perfume_map.json");
+    // std::ifstream file("../../perfume_map.json");
 
     /* file wouldn't open for me with method above on clion so i just went into clion and did
      * run -> edit configurations -> and set the working directory to my project folder which fixed it
      * but idk if you are all on clion so you could comment that out as well
      */
-    //std::ifstream file("perfume_map.json");
+    std::ifstream file("perfume_map.json");
 
     if (!file.is_open()) {
         std::cerr << "Fail";
