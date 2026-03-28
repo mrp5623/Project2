@@ -8,20 +8,7 @@
 #include <iterator>
 using json = nlohmann::json;
 
-
-int main(int argc, char *argv[]) {
-    //open file relative from executable
-    std::ifstream file("../../perfume_map.json");
-
-    if (!file.is_open()) {
-        std::cerr << "Fail";
-        return 1;
-    }
-
-    json perfume_map;
-    //dump file into json object
-    file >> perfume_map;
-
+void set_implementation(json perfume_map) {
     std::map<std::string, std::set<std::pair<std::string, std::string>>> dataset;
 
     for (auto& [note, perfumes] : perfume_map.items()) {
@@ -60,6 +47,29 @@ int main(int argc, char *argv[]) {
         std::cout << count << ". " << name << ": " << url << std::endl;
         count++;
     }
+
+}
+
+void heap_implementation(json perfume_map) {
+    //TODO
+}   
+
+
+int main(int argc, char *argv[]) {
+    //open file relative from executable
+    std::ifstream file("../../perfume_map.json");
+
+    if (!file.is_open()) {
+        std::cerr << "Fail";
+        return 1;
+    }
+
+    json perfume_map;
+    //dump file into json object
+    file >> perfume_map;
+
+    set_implementation(perfume_map);
+    //heap_implementation(perfume_map);
     
     return 0;
     
