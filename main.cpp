@@ -25,22 +25,70 @@ void set_implementation(json perfume_map) {
     Set results;
 
     while(true){
-        std::cout << "Enter a desired note, or enter Done to continue!" << std::endl;
+        std::cout << "Choose between the following options:" << std::endl;
+        std::cout << "1. Add a note\n2. Remove a note\n3. See all notes\n4. Continue to results" << std::endl;
         std::getline(std::cin, input);
         if (input=="Done"){
             break;
         } 
-        else if(dataset.find(input)==dataset.end()){
-            std::cout << "Not a note!" << std::endl;
-            continue;
+
+        if(input=="1"){
+            std::cout << "Enter note to add: ";
+            std::getline(std::cin, input);
+            if(dataset.find(input)==dataset.end()){
+                std::cout << "Not a note!" << std::endl;
+                continue;
+            }
+            else if (results.isEmpty()) {
+                std::cout << "Adding " << input << std::endl;
+                results = dataset[input];
+            } else {
+                std::cout << "Intersecting " << input << std::endl;
+                results = results.intersect(dataset[input]);
+            }
         }
-        else if (results.isEmpty()) {
-            std::cout << "Adding " << input << std::endl;
-            results = dataset[input];
-        } else {
-            std::cout << "Intersecting " << input << std::endl;
-            results = results.intersect(dataset[input]);
+        else if(input=="2"){
+            std::cout << "Enter note to remove: ";
+            std::getline(std::cin, input);
+            if(dataset.find(input)==dataset.end()){
+                std::cout << "Not a note!" << std::endl;
+                continue;
+            }
+            else if (results.isEmpty()) {
+                std::cout << "No notes selected yet" << std::endl;
+                continue;
+            } else {
+                std::cout << "Removing " << input << std::endl;
+
+                if(!results.contains(input)) {
+                    continue;
+                }
+                
+                Set newResults;
+                for (auto& [note, fragrances] : dataset) {
+                    if (note == input) continue;
+                    if (newResults.isEmpty()) {
+                        newResults = fragrances;
+                    } else {
+                        newResults = newResults.intersect(fragrances);
+                    }
+                }
+                results = newResults;
+            }
         }
+        else if(input=="3"){
+            std::cout << "All notes: " << std::endl;
+            for (auto& [note, _] : dataset) {
+                std::cout << note << std::endl;
+            }
+        }
+        else if(input=="4"){
+            break;
+        }
+        else{
+            std::cout << "Error, try again" << std::endl;
+        }
+        
     }
 
     std::cout << "Here are the perfumes that match your criteria:" << std::endl;
@@ -78,7 +126,7 @@ void heap_implementation(json perfume_map) {
             std::cout << std::endl;
         }
         std::cout << "Choose between the following options:" << std::endl;
-        std::cout << "1. Add a note\n2. Remove a note\n3. Continue to results" << std::endl;
+        std::cout << "1. Add a note\n2. Remove a note\n3. See all notes\n4. Continue to results" << std::endl;
         std::getline(std::cin, input);
 
         if (input == "1") {
@@ -105,6 +153,13 @@ void heap_implementation(json perfume_map) {
             }
         }
         else if (input == "3") {
+            std::cout << "All notes: " << std::endl;
+            for (auto& [note, _] : noteToFrags) {
+                std::cout << note << std::endl;
+            }
+            std::cout << std::endl;
+        }
+        else if (input == "4") {
             break;
         }
         else {
@@ -142,7 +197,7 @@ void heap_implementation(json perfume_map) {
     }
 
     if (res.empty()) {
-        std::cout << "We" << std::endl;
+        std::cout << "We cannot find any perfumes matching your criteria." << std::endl;
     }
 
     // reversed because min heap displays recommendations from lowest to highest score after popping into res
@@ -159,8 +214,9 @@ void heap_implementation(json perfume_map) {
 
 int main(int argc, char *argv[]) {
     //open file relative from executable
-    std::ifstream file("../../perfume_map.json");
-    //std::ifstream file("perfume_map.json");
+    //std::ifstream file("../../perfume_map.json");
+
+    std::ifstream file("perfume_map.json");
 
     if (!file.is_open()) {
         std::cerr << "Failed to open file" << std::endl;
@@ -171,8 +227,8 @@ int main(int argc, char *argv[]) {
     //dump file into json object
     file >> perfume_map;
 
-    //set_implementation(perfume_map);
-    heap_implementation(perfume_map);
+    set_implementation(perfume_map);
+    //heap_implementation(perfume_map);
     
     return 0;
 }

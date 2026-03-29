@@ -188,7 +188,7 @@ class Set
         inorderIntersectHelper(node->left, other, result);
 
         // Check for intersection
-        if (other.contains(node->frag)) {
+        if (other.contains(node->frag->name)) {
             result.insert(node->frag);
         }
 
@@ -245,6 +245,7 @@ class Set
         }
 
         //insert
+
         bool insert(Fragrance* frag) {
             Node* newNode = new Node(frag);
 
@@ -286,12 +287,12 @@ class Set
         }
 
         //remove
-        bool erase(Fragrance* frag) {
+        bool erase(std::string name) {
             Node* current = root;
             while (current) {
-                if (frag->name < current->frag->name) {
+                if (name < current->frag->name) {
                     current = current->left;
-                } else if (frag->name > current->frag->name) {
+                } else if (name > current->frag->name) {
                     current = current->right;
                 } else {
                     break;
@@ -353,31 +354,31 @@ class Set
 
 
         //has?
-        bool contains(const Fragrance* frag) const {
+        bool contains(const std::string name) const {
             Node* current = root;
             while (current) {
-                if(frag->name < current->frag->name) {
+                if(name < current->frag->name) {
                     current = current->left;
                 }
-                else if (frag->name > current->frag->name) {
+                else if (name > current->frag->name) {
                     current = current->right;
                 }
                 else {
                     return true;
                 }
-                }
+            }
 
                 return false;
         }
 
         //returns fragrance not iterator
-        Fragrance* find(const Fragrance* frag) const {
+        Fragrance* find(const std::string name) const {
             Node* current = root;
             while (current) {
-               if(frag->name < current->frag->name) {
+               if(name < current->frag->name) {
                    current = current->left;
                }
-               else if (frag->name > current->frag->name) {
+               else if (name > current->frag->name) {
                    current = current->right;
                }
                else {
