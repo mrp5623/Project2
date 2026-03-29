@@ -219,7 +219,10 @@ class Set
         if (n) {
             dest(n->left);
             dest(n->right);
-            delete n->frag;
+
+            // potential mistake? have to look later
+            // delete n->frag;
+
             delete n;
         }
     }

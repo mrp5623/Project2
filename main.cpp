@@ -21,7 +21,7 @@ void set_implementation(json perfume_map) {
     for (auto& [note, perfumes] : perfume_map.items()) {
         for (auto& item : perfumes.items()) {
             dataset[note].insert(new Fragrance{static_cast<std::string>(item.value()[0]), static_cast<std::string>(item.value()[1])});
-        }   
+        }
     }
 
     std::string input = " ";
@@ -46,6 +46,7 @@ void set_implementation(json perfume_map) {
                 std::cout << "Adding " << input << std::endl;
                 user_notes.push_back(input);
                 results = dataset[input];
+                std::cout << std::endl;
             } else {
                 std::cout << "Intersecting " << input << std::endl;
                 user_notes.push_back(input);
@@ -106,12 +107,13 @@ void set_implementation(json perfume_map) {
 
     std::cout << "Here are the perfumes that match your criteria:" << std::endl;
     results.printResults();
-
 }
 
 void heap_implementation(json perfume_map) {
      // storage for all of our fragrances so that we can add pointers to them in our sets safely for memory purposes
     std::vector<Fragrance> allFrags;
+    // reserve memory in advance to prevent reallocation issues
+    allFrags.reserve(250000);
 
     // map that stores note keys and pointers to all fragrances containing those notes
     std::map<std::string, std::set<Fragrance*>> noteToFrags;
@@ -227,8 +229,6 @@ void heap_implementation(json perfume_map) {
 
 int main(int argc, char *argv[]) {
     //open file relative from executable
-    //std::ifstream file("../../perfume_map.json");
-
     std::ifstream file("perfume_map.json");
 
     if (!file.is_open()) {
@@ -240,8 +240,8 @@ int main(int argc, char *argv[]) {
     //dump file into json object
     file >> perfume_map;
 
-    set_implementation(perfume_map);
-    //heap_implementation(perfume_map);
+    // set_implementation(perfume_map);
+    heap_implementation(perfume_map);
     
     return 0;
 }
