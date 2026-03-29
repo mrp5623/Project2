@@ -57,6 +57,8 @@ void set_implementation(json perfume_map) {
 void heap_implementation(json perfume_map) {
     // storage for all of our fragrances so that we can add pointers to them in our sets safely for memory purposes
     std::vector<Fragrance> allFrags;
+    // reserve memory in advance to prevent reallocation issues
+    allFrags.reserve(250000);
 
     // map that stores note keys and pointers to all fragrances containing those notes
     std::unordered_map<std::string, std::unordered_set<Fragrance*>> noteToFrags;
@@ -184,9 +186,8 @@ int main(int argc, char *argv[]) {
     //dump file into json object
     file >> perfume_map;
 
-    set_implementation(perfume_map);
+    // set_implementation(perfume_map);
     heap_implementation(perfume_map);
 
     return 0;
-
 }

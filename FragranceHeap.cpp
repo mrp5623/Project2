@@ -17,15 +17,15 @@ int FragranceHeap::parent(int ind) {
 }
 
 int FragranceHeap::leftChild(int ind) {
-    return 2 * (ind + 1);
+    return 2 * ind + 1;
 }
 
 int FragranceHeap::rightChild(int ind) {
-    return 2 * (ind + 2);
+    return 2 * ind + 2;
 }
 
 void FragranceHeap::heapifyUp(int childInd) {
-    while (heap[parent(childInd)].score >= 0 && heap[parent(childInd)].score > heap[childInd].score) {
+    while (childInd > 0 && heap[parent(childInd)].score > heap[childInd].score) {
         std::swap(heap[childInd], heap[parent(childInd)]);
         childInd = parent(childInd);
     }
