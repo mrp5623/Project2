@@ -9,16 +9,19 @@
 #include "Set.hpp"
 #include "Fragrance.h"
 #include "FragranceHeap.h"
+#include <vector>
+#include <algorithm>
 using json = nlohmann::json;
 
 void set_implementation(json perfume_map) {
     //std::map<std::string, std::set<std::pair<std::string, std::string>>> dataset;
     std::map<std::string, Set> dataset;
+    std::vector<std::string> user_notes;
 
     for (auto& [note, perfumes] : perfume_map.items()) {
         for (auto& item : perfumes.items()) {
             dataset[note].insert(new Fragrance{static_cast<std::string>(item.value()[0]), static_cast<std::string>(item.value()[1])});
-        }
+        }   
     }
 
     std::string input = " ";
@@ -41,9 +44,11 @@ void set_implementation(json perfume_map) {
             }
             else if (results.isEmpty()) {
                 std::cout << "Adding " << input << std::endl;
+                user_notes.push_back(input);
                 results = dataset[input];
             } else {
                 std::cout << "Intersecting " << input << std::endl;
+                user_notes.push_back(input);
                 results = results.intersect(dataset[input]);
             }
         }
@@ -60,20 +65,28 @@ void set_implementation(json perfume_map) {
             } else {
                 std::cout << "Removing " << input << std::endl;
 
-                if(!results.contains(input)) {
+                //exists //
+                if (std::find(user_notes.begin(), user_notes.end(), input) == user_notes.end()) {
                     continue;
                 }
-                
-                Set newResults;
-                for (auto& [note, fragrances] : dataset) {
-                    if (note == input) continue;
-                    if (newResults.isEmpty()) {
-                        newResults = fragrances;
-                    } else {
-                        newResults = newResults.intersect(fragrances);
+
+                //remove
+                for (int i = 0; i < user_notes.size(); i++) {
+                    if (user_notes[i] == input) {
+                        user_notes.erase(user_notes.begin() + i);
+                        break;
                     }
                 }
-                results = newResults;
+
+                //do again
+                results = Set();
+                for (const auto& note : user_notes) {
+                    if (results.isEmpty()) {
+                        results = dataset[note];
+                    } else {
+                        results = results.intersect(dataset[note]);
+                    }
+                }
             }
         }
         else if(input=="3"){
@@ -214,7 +227,9 @@ void heap_implementation(json perfume_map) {
 
 int main(int argc, char *argv[]) {
     //open file relative from executable
-    std::ifstream file("../../perfume_map.json");
+    //std::ifstream file("../../perfume_map.json");
+
+    std::ifstream file("perfume_map.json");
 
     if (!file.is_open()) {
         std::cerr << "Failed to open file" << std::endl;
