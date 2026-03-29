@@ -351,6 +351,7 @@ class Set
             size = 0;
         }
 
+
         //has?
         bool contains(const Fragrance* frag) const {
             Node* current = root;
