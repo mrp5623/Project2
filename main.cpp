@@ -214,9 +214,7 @@ void heap_implementation(json perfume_map) {
 
 int main(int argc, char *argv[]) {
     //open file relative from executable
-    //std::ifstream file("../../perfume_map.json");
-
-    std::ifstream file("perfume_map.json");
+    std::ifstream file("../../perfume_map.json");
 
     if (!file.is_open()) {
         std::cerr << "Failed to open file" << std::endl;
