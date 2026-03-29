@@ -7,6 +7,7 @@
 
 #include <vector>
 #include "Fragrance.h"
+#include <stdexcept>
 
 // min-heap for maintaining top 5 closest fragrance recommendations
 class FragranceHeap {

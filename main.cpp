@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <map>
 #include <unordered_map>
 #include <unordered_set>
 #include <set>
@@ -11,27 +12,49 @@
 #include "FragranceHeap.h"
 using json = nlohmann::json;
 
-#define USING_HEAP
+void set_implementation(json perfume_map) {
+    std::map<std::string, std::set<std::pair<std::string, std::string>>> dataset;
 
-int main(int argc, char *argv[]) {
-    //open file relative from executable
-    // std::ifstream file("../../perfume_map.json");
-
-    /* file wouldn't open for me with method above on clion so i just went into clion and did
-     * run -> edit configurations -> and set the working directory to my project folder which fixed it
-     * but idk if you are all on clion so you could comment that out as well
-     */
-    std::ifstream file("perfume_map.json");
-
-    if (!file.is_open()) {
-        std::cerr << "Fail";
-        return 1;
+    for (auto& [note, perfumes] : perfume_map.items()) {
+        for (auto& item : perfumes.items()) {
+            dataset[note].insert({static_cast<std::string>(item.value()[0]), static_cast<std::string>(item.value()[1])});
+        }
     }
 
-    json perfume_map;
-    //dump file into json object
-    file >> perfume_map;
+    std::string input = " ";
+    std::set<std::pair<std::string, std::string>> results;
 
+    while(true){
+        std::cout << "Enter a desired note, or enter Done to continue!" << std::endl;
+        std::getline(std::cin, input);
+        if (input=="Done"){
+            break;
+        }
+        else if(dataset.find(input)==dataset.end()){
+            std::cout << "Not a note!" << std::endl;
+            continue;
+        }
+        else if (results.empty()) {
+            std::cout << "Adding " << input << std::endl;
+            results = dataset[input];
+        } else {
+            std::cout << "Intersecting " << input << std::endl;
+            std::set<std::pair<std::string, std::string>> new_results = {};
+            std::set_intersection(results.begin(), results.end(), dataset[input].begin(), dataset[input].end(), std::inserter(new_results, new_results.begin()));
+            results = new_results;
+        }
+    }
+
+    std::cout << "Here are the perfumes that match your criteria:" << std::endl;
+    int count = 1;
+    for (auto& [name, url] : results) {
+        std::cout << count << ". " << name << ": " << url << std::endl;
+        count++;
+    }
+
+}
+
+void heap_implementation(json perfume_map) {
     // storage for all of our fragrances so that we can add pointers to them in our sets safely for memory purposes
     std::vector<Fragrance> allFrags;
 
@@ -47,7 +70,6 @@ int main(int argc, char *argv[]) {
 
     std::string input = " ";
 
-#ifdef USING_HEAP
     std::unordered_set<std::string> currNotes;
 
     while (true) {
@@ -140,37 +162,31 @@ int main(int argc, char *argv[]) {
         std::cout << count << ". " << n.frag->name << ": " << n.frag->url << std::endl;
         count++;
     }
-#else
-    std::unordered_set<> results;
+}
 
-    while(true){
-        std::cout << "Enter a desired note, or enter Done to continue!" << std::endl;
-        std::getline(std::cin, input);
-        if (input=="Done"){
-            break;
-        }
-        else if(noteToFrags.find(input)==noteToFrags.end()){
-            std::cout << "Not a note!" << std::endl;
-            continue;
-        }
-        else if (results.empty()) {
-            std::cout << "Adding " << input << std::endl;
-            results = noteToFrags[input];
-        } else {
-            std::cout << "Intersecting " << input << std::endl;
-            std::set<std::pair<std::string, std::string>> new_results = {};
-            std::set_intersection(results.begin(), results.end(), noteToFrags[input].begin(), noteToFrags[input].end(), std::inserter(new_results, new_results.begin()));
-            results = new_results;
-        }
+
+int main(int argc, char *argv[]) {
+    //open file relative from executable
+    // std::ifstream file("../../perfume_map.json");
+
+    /* file wouldn't open for me with method above on clion so i just went into clion and did
+     * run -> edit configurations -> and set the working directory to my project folder which fixed it
+     * but idk if you are all on clion so you could comment that out as well
+     */
+    std::ifstream file("perfume_map.json");
+
+    if (!file.is_open()) {
+        std::cerr << "Fail";
+        return 1;
     }
 
-    std::cout << "Here are the perfumes that match your criteria:" << std::endl;
-    int count = 1;
-    for (auto& [name, url] : results) {
-        std::cout << count << ". " << name << ": " << url << std::endl;
-        count++;
-    }
-#endif
-    
+    json perfume_map;
+    //dump file into json object
+    file >> perfume_map;
+
+    set_implementation(perfume_map);
+    heap_implementation(perfume_map);
+
     return 0;
+
 }
