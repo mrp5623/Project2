@@ -3,7 +3,7 @@ project(PerfumeScraper)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(main main.cpp)
+add_executable(main main.cpp FragranceHeap.cpp FragranceHeap.h Fragrance.h Set.hpp)
 
 find_package(nlohmann_json CONFIG REQUIRED)
 

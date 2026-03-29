@@ -9,8 +9,8 @@ enum Color {red, black};
 class Set
 { 
     struct Node {
-        Fragrance* frag;
-        Color color;
+        Fragrance* frag; //fragrance
+        Color color;     //red/black
         Node* parent;
         Node* left;
         Node* right;
@@ -21,9 +21,12 @@ class Set
     Node* root;
     int size;
 
+    //getters
     Color getColor(Node* n) {return (n == nullptr) ? black : n->color;}
     int getSize() const {return size;}
 
+    //helpers
+    //changes colors to maintain red-black properties after insertion
     void insertHelper(Node* c) {
         while (c->parent && c->parent->color == red) {
             if (c->parent == c->parent->parent->left) {
@@ -72,6 +75,7 @@ class Set
         root->color = black;
     }
 
+    //replaces c with r
     void switchErase(Node* c, Node* r) {
         if (c->parent == nullptr) {root = r;}
         else if (c == c->parent->left) {c->parent->left = r;}
@@ -80,6 +84,7 @@ class Set
         if (r != nullptr) {r->parent = c->parent;}
     }
 
+    //rotations to maintain red-black properties after deletion
     void rotateLeft(Node* a) {
         Node* b = a->right;
         a->right = b->left;
@@ -118,6 +123,7 @@ class Set
         b->parent = a;
     }
 
+    //keeps red-black properties after deletion
     void removeBlack(Node* c, Node* cParent) {
           while (c != root && getColor(c) == black) {
             if (c == cParent->left) {
@@ -175,6 +181,7 @@ class Set
         if (c) c->color = black;
     }
 
+    //inorder recursion to find intersection of two sets
     void inorderIntersectHelper(Node* node, const Set& other, Set& result) const {
         if (!node) return;
 
@@ -188,6 +195,7 @@ class Set
         inorderIntersectHelper(node->right, other, result);
     }
 
+    //for copy constructor and assignment operator
     void copyHelper(Node* node) {
         if (!node) return;
 
@@ -196,6 +204,7 @@ class Set
         copyHelper(node->right);
     }
 
+    //inorder print
     void printHelper(Node* node, int& count) {
             if (!node) return;
 
@@ -203,8 +212,9 @@ class Set
             printHelper(node->left, count);
             std::cout << count++ << ". " << node->frag->name << ": " << node->frag->url << std::endl;
             printHelper(node->right, count);
-        }
+    }
 
+    //recursive destructor helper
     void dest(Node* n) {
         if (n) {
             dest(n->left);
@@ -221,7 +231,7 @@ class Set
             return root == nullptr;
         }
 
-        //b3
+        //copy constructor and assignment operator
         Set(const Set& other) : root(nullptr), size(0) {
             copyHelper(other.root);
         }
@@ -234,6 +244,7 @@ class Set
             return *this;
         }
 
+        //insert
         bool insert(Fragrance* frag) {
             Node* newNode = new Node(frag);
 
@@ -274,6 +285,7 @@ class Set
                 return true;
         }
 
+        //remove
         bool erase(Fragrance* frag) {
             Node* current = root;
             while (current) {
@@ -339,7 +351,7 @@ class Set
             size = 0;
         }
 
-        
+        //has?
         bool contains(const Fragrance* frag) const {
             Node* current = root;
             while (current) {
@@ -382,9 +394,9 @@ class Set
         }
 
         Set intersect(const Set& other) const {
-            Set result;
-            inorderIntersectHelper(root, other, result);
-            return result;
+            Set both;
+            inorderIntersectHelper(root, other, both);
+            return both;
         }
 
         void printResults() {
